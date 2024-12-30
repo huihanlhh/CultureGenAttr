@@ -58,13 +58,13 @@ python culture-gen-scripts/culture_symbols.py \
     --probability # calculate symbol-culture joint probability \
     --choose # get mapping for retrieving valid cultural symbols
 ```
-A symbol-culture mapping is stored using the joint probability in `{args.home_dir}/probable_data/categories_nationality_{args.num_samples}_{args.model_name}_prob={args.probably}_value_to_culture_mapping_{topic}.json`. The keys of this mapping pertain to all cultural symbols from our generations.
+A symbol-culture mapping is stored using the joint probability in `{args.home_dir}/probable_data/categories_nationality_{args.num_samples}_{args.model_name}_prob={args.probably}_value_to_culture_mapping_{topic}.json`. The keys of this mapping pertain to all valid cultural symbols from our generations.
 
 ### Diffuse Association Symbols
 
 To extract diffuse association symbols from the complete list of valid symbols, run the following script:
 ```bash
-python culture-gen-scripts/culture_symbols_diffuse.py \
+python culture-gen-scripts/get_diffuse_culture_symbols.py \
     --home_dir __ # the directory to store searched data \
     --model_name __ # olmo-7b \
     --num_samples __ # default=100 \
@@ -156,7 +156,7 @@ The script generates the geographical distribution of memorization:
 
 To trace symbols that are weak associations generalized from memorization or diffuse association, run the following script:
 ```bash
-python memoed-scripts/weak_association_trace.py \
+python memoed-scripts/weak_association_generalization.py \
     --home_dir __ # the directory to store searched data \
     --model_name __ # olmo-7b \
     --topic __ # topic of interest in [food, clothing] \
