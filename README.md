@@ -210,8 +210,8 @@ The script above stores the overview in a `JSON` file in the following format:
 ```bash
 "{culture}": {
     "M": % of generations with memorized associations,
-    "TG": % of generations with weak association generalized from memorization,
-    "OGS": % of generations with diffuse association or generalized from diffuse association symbols,
+    "TG": % of generations with weak association generalized from memorization or  from diffuse association symbols,
+    "OGS": % of generations with diffuse association,
     "OGC": % of generations which are memorization of another culture,
     "U": % of generations not traced to any category above,    
 },
