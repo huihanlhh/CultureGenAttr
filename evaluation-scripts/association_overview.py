@@ -204,11 +204,11 @@ if __name__ == '__main__':
     if args.mark_symbols:
         """
         Markings:
-        M - Memorization
-        TG - Weak Association Generalization traceable to memorization
-        OGS - When symbol is diffuse association or traced to diffuse association symbol
-        OGC - When memorized symbol of other culture is generated
-        U - Unweak association generalization
+        M: Memorization
+        TG: Weak Association Traced to Memorized or Diffuse Association
+        OGS: Diffuse Association
+        OGC: Cross-Culture Generalization (Not memorized)
+        U: Untraceable Generalization
         """
 
         """
@@ -223,7 +223,7 @@ if __name__ == '__main__':
         memorized_symbols = memorized_symbols["memorized_symbols"]
 
         # Path to memorization stats
-        path_to_memorization_stats = f"{args.home_dir}/memoed_scripts/memorization_stats_olmo-7b_{topic}_Z=[2.6].json"
+        path_to_memorization_stats = f"{args.home_dir}/memoed_scripts/memorization_stats_{args.model_name}_{topic}_Z=[2.6].json"
 
         # Load memorization stats
         with open(path_to_memorization_stats, "r") as f:
@@ -255,14 +255,14 @@ if __name__ == '__main__':
         traced_to_diffuse_lst = list(set(traced_to_diffuse_lst))
 
         """
-        Unweak association generalizations
+        Untraceable association generalizations
         """
-        # Path to unweak association generalization
-        path_to_unweak_association_generalization = f"{args.home_dir}/memoed_scripts/unweak_association_generalizations_{topic}.json"
-        # Open unweak association generalizations
-        with open(path_to_unweak_association_generalization, "r") as f:
-            unweak_association_generalizations = json.load(f)
-        unweak_association_generalizations_lst = unweak_association_generalizations["unweak_association_generalizations"]
+        # Path to untraceable association generalization
+        path_to_untraceable_association_generalization = f"{args.home_dir}/memoed_scripts/untraceable_association_generalizations_{topic}.json"
+        # Open Untraceable association generalizations
+        with open(path_to_untraceable_association_generalization, "r") as f:
+            untraceable_association_generalizations = json.load(f)
+        untraceable_association_generalizations_lst = untraceable_association_generalizations["untraceable_association_generalizations"]
 
         """
         Load the accumulated symbols
@@ -314,15 +314,15 @@ if __name__ == '__main__':
                     """
                     Weak Association from Diffuse Association
                     """
-                    marking_lst[i] = "OGS-I"
+                    marking_lst[i] = "TG"
                 elif response in diffuse_symbols:
                     """
                     Diffuse Association
                     """
                     marking_lst[i] = "OGS"
-                elif response in unweak_association_generalizations_lst:
+                elif response in untraceable_association_generalizations_lst:
                     """
-                    Unweak association generalization
+                    Untraceable association generalization
                     """
                     marking_lst[i] = "U"
                 #print(f"Response: {response}, Marking: {marking_lst[i]}")
@@ -348,7 +348,7 @@ if __name__ == '__main__':
 
         # Initialize the dictionary
         for key in marked_symbols_dict.keys():
-            dictionary_percentages[key] = {"M": 0, "TG": 0, "OGS-I": 0, "OGS": 0, "OGC": 0, "U": 0}
+            dictionary_percentages[key] = {"M": 0, "TG": 0, "OGS": 0, "OGC": 0, "U": 0}
 
         # Iterate through the marked symbols
         for key in marked_symbols_dict.keys():

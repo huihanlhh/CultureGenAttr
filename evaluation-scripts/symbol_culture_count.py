@@ -46,7 +46,7 @@ def main(home_dir, model_name, topic):
     logging.basicConfig(filename=f"{home_dir}/culture_gen_analysis.log", filemode='w', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
 
-    json_path = f"{home_dir}/probable_data/categories_nationality_100_{model_name}_prob=True_non_independent_symbols.json"
+    json_path = f"{home_dir}/probable_data/categories_nationality_100_{model_name}_prob=True_non_diffuse_symbols.json"
     symbols = load_json(json_path)[topic]
 
     responses_path = f"{home_dir}/probable_data/categories_nationality_100_{model_name}_prob=True_new_shortened.json"
