@@ -374,8 +374,6 @@ if __name__ == "__main__":
     
     if args.choose:
         print("CHOOSING NOW")
-        # path to save number of culture symbols for each culture that overlaps with culture agnostic generations
-        culture_agnostic_save_path = f"{args.home_dir}/probable_data/categories_nationality_{args.num_samples}_{args.model_name}_prob={args.probably}_culture_agnostic_overlap_evaluation.json"
         # path to shortened values
         new_shortened_values = json.load(open(f"{args.home_dir}/probable_data/categories_nationality_{args.num_samples}_{args.model_name}_prob={args.probably}_new_shortened.json", "r"))
         with open(f"{args.home_dir}/data/nationalities.csv", "r") as r:
