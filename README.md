@@ -1,5 +1,5 @@
 # Attributing Culture-Conditioned Generations to Pretraining Corpora
-This repository contains code for paper "Attributing Culture-Conditioned Generations to Pretraining Corpora" ([Arxiv]()).
+This repository contains code for paper "[Attributing Culture-Conditioned Generations to Pretraining Corpora]()".
 
 ## Quick Links
 - [Introduction](#introduction)
