@@ -139,6 +139,8 @@ def plot_world_map(home_dir, path_to_memorization_stats, topic):
     world.plot(column='memorization_counts', ax=ax, cmap='OrRd', legend=True, missing_kwds={'color': 'gray'}, cax=cax)
 
     plt.savefig(f"memorization_world_map_{topic}_Z=[{memorization_Z_SCORE}].png")
+
+    # # Alternate Plotting method
     # for country, nationality in countries_nationalities_list:
     #     mapped_country = name_to_gpd_mapping.get(country, country)
     #     if mapped_country in world_country_names:
@@ -199,34 +201,34 @@ def calculate_occurence_nationalities(nationalities_):
     return occurrences_dict
 
 """
-Function to assess cultural overmemorization
+Function to assess cross-cultural generalization of memorized symbols
 """
-def cultural_overmemorization(memo_data, responses, topic, model_name):
-    cultural_overmemo_dict = {}
+def cross_cultural_generalization(memo_data, responses, topic, model_name):
+    cross_culture_gen_dict = {}
     for culture in memo_data.keys():
         memo_symbols = memo_data[culture]["symbols"]
         for memo_symbol in memo_symbols:
-            if memo_symbol in cultural_overmemo_dict:
+            if memo_symbol in cross_culture_gen_dict:
                 continue
-            cultural_overmemo_dict[memo_symbol] = 0
+            cross_culture_gen_dict[memo_symbol] = 0
             countries = find_countries_with_symbol(responses[topic]["neighbor"], memo_symbol)
             countries = [country.lower() for country in countries]
             for country in countries:
                 if country != culture.lower() and memo_symbol not in memo_data[country]["symbols"]:
-                    cultural_overmemo_dict[memo_symbol] += 1
-    cultural_overmemo_dict = {k: v for k, v in sorted(cultural_overmemo_dict.items(), key=lambda item: item[1], reverse=True)}
+                    cross_culture_gen_dict[memo_symbol] += 1
+    cross_culture_gen_dict = {k: v for k, v in sorted(cross_culture_gen_dict.items(), key=lambda item: item[1], reverse=True)}
 
     # For dictionary get the average, max, min
-    avg = sum(cultural_overmemo_dict.values())/len(cultural_overmemo_dict)
-    max_val = max(cultural_overmemo_dict.values())
-    min_val = min(cultural_overmemo_dict.values())
+    avg = sum(cross_culture_gen_dict.values())/len(cross_culture_gen_dict)
+    max_val = max(cross_culture_gen_dict.values())
+    min_val = min(cross_culture_gen_dict.values())
 
     # Get the symbols at the max and min
-    max_symbol = [k for k, v in cultural_overmemo_dict.items() if v == max_val]
-    min_symbol = [k for k, v in cultural_overmemo_dict.items() if v == min_val]
+    max_symbol = [k for k, v in cross_culture_gen_dict.items() if v == max_val]
+    min_symbol = [k for k, v in cross_culture_gen_dict.items() if v == min_val]
 
     # Print the results
-    print(f"Topic: {topic} - Cultural Over-memorization Stats")
+    print(f"Topic: {topic} - Cross Culture Generalization Stats")
     print(f"Average no. of countries for which a memorized symbol is generated: {avg}")
     print(f"Max no. of countries for which a memorized symbol is generated: {max_val}")
     print(f"Min no. of countries for which a memorized symbol is generated: {min_val}")
@@ -235,15 +237,15 @@ def cultural_overmemorization(memo_data, responses, topic, model_name):
 
     # Save the dictionary to a JSON file
     with open(f"cultural_overmemo_{model_name}_{topic}.json", "w") as f:
-        json.dump(cultural_overmemo_dict, f, indent=4)
+        json.dump(cross_culture_gen_dict, f, indent=4)
 
-    non_zero = len([k for k, v in cultural_overmemo_dict.items() if v > 0])
-    total = len(cultural_overmemo_dict)
+    non_zero = len([k for k, v in cross_culture_gen_dict.items() if v > 0])
+    total = len(cross_culture_gen_dict)
     print("Symbols which are generated for atleast for one other culture:")
     print(f"{topic.capitalize()}: Non-zero: {non_zero}, Total: {total}, Percentage: {non_zero/total if total else 0}")
 
     # Save unique memorized symbols
-    unique_memo_symbols = list(cultural_overmemo_dict.keys())
+    unique_memo_symbols = list(cross_culture_gen_dict.keys())
     with open(f"memorized_symbols_{model_name}_{topic}.json", "w") as f:
         json.dump(unique_memo_symbols, f, indent=4)
         
@@ -257,7 +259,7 @@ if __name__ == "__main__":
     parser.add_argument("--calc_memorization", action="store_true", help="Calculate memorization statistics")
     parser.add_argument("--plot_world_map", action="store_true", help="Plot the world map with memorization counts")
     parser.add_argument("--calc_corr", action="store_true", help="Calculate correlation between number of memorized symbols and the number of occurrences of the country")
-    parser.add_argument("--assess_cultural_overmemo", action="store_true", help="Assess cultural over-memorization")
+    parser.add_argument("--assess_cross_cultural_gen", action="store_true", help="Assess cultural over-memorization")
 
     args = parser.parse_args()
 
@@ -334,10 +336,10 @@ if __name__ == "__main__":
             plt.savefig(f"prob_dist_{symbol}.png")
             plt.show()
         else:
-            # Path to non_independent_symbols 
-            path_to_non_independent_symbols = f"{args.home_dir}/probable_data/categories_nationality_100_{args.model_name}_prob=True_non_independent_symbols.json"
-            with open(path_to_non_independent_symbols, "r") as f:
-                non_independent_symbols = json.load(f)
+            # Path to non_diffuse_symbols 
+            path_to_non_diffuse_symbols = f"{args.home_dir}/probable_data/categories_nationality_100_{args.model_name}_prob=True_non_diffuse_symbols.json"
+            with open(path_to_non_diffuse_symbols, "r") as f:
+                non_diffuse_symbols = json.load(f)
 
             # Lowercase the countries
             countries_nationalities_list = [country.lower() for country in countries_nationalities_list]
@@ -349,7 +351,7 @@ if __name__ == "__main__":
             generalised_symbols = []
 
             # Get all symbols
-            symbols = non_independent_symbols[args.topic]
+            symbols = non_diffuse_symbols[args.topic]
             symbol_stats_dictionary = {}
             for symbol in tqdm(symbols):
                 if symbol not in list(doc_ranking.keys()):
@@ -545,9 +547,12 @@ if __name__ == "__main__":
         print(f"Spearman correlation: {spearman_corr}")
         print(f"Kendall correlation: {kendall_corr}")
 
-    # Assess cultural over-memorization
-    if args.assess_cultural_overmemo:
-        print("Assessing cultural over-memorization...")
+    # Assessing cross-cultural generalization of memorized symbols
+    if args.assess_cross_cultural_gen:
+        print("Assessing cross-cultural generalization of memorized symbols...")
         # Load the memorization stats JSON
         with open(path_to_memorization_stats, "r") as f:
             memorization_stats = json.load(f)
+
+        # Call the function to assess cross-cultural generalization
+        cross_cultural_generalization(memorization_stats, shortened_responses, args.topic, args.model_name)

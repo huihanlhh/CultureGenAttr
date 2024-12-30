@@ -126,14 +126,14 @@ if __name__ == "__main__":
     diffuse_symbols_topic = diffuse_symbols[topic]
 
     # path to store weak association generalizations
-    weak_ssociation_generalizations_path = f"{args.home_dir}/memoed_scripts/weak_ssociation_generalizations_{model_name}_{topic}_Z=[{MEMORIZATION_Z_SCORE}].json"
+    weak_association_generalizations_path = f"{args.home_dir}/memoed_scripts/weak_association_generalizations_{model_name}_{topic}_Z=[{MEMORIZATION_Z_SCORE}].json"
 
     # Check if it exists
-    if os.path.exists(weak_ssociation_generalizations_path):
-        with open(weak_ssociation_generalizations_path, "r") as f:
-            weak_ssociation_generalizations = json.load(f)
+    if os.path.exists(weak_association_generalizations_path):
+        with open(weak_association_generalizations_path, "r") as f:
+            weak_association_generalizations = json.load(f)
     else:
-        weak_ssociation_generalizations = {}
+        weak_association_generalizations = {}
 
     """
     TRACING GENERALIZATIONS TO MEMORIZED SYMBOLS
@@ -143,9 +143,9 @@ if __name__ == "__main__":
         memorized_symbol_lst = memorized_stats[culture]["symbols"]
         print(f"Culture: {culture}")
         for memorized_symbol in tqdm(memorized_symbol_lst):
-            if memorized_symbol in list(weak_ssociation_generalizations.keys()):
+            if memorized_symbol in list(weak_association_generalizations.keys()):
                 continue
-            weak_ssociation_generalizations[memorized_symbol] = []
+            weak_association_generalizations[memorized_symbol] = []
             print(f"memorized Symbol: {memorized_symbol}")
 
             # Prompt the model and get responses
@@ -155,28 +155,28 @@ if __name__ == "__main__":
             for generalized_symbol in generalized_symbols:
                 for response in responses:
                     if generalized_symbol in response:
-                        weak_ssociation_generalizations[memorized_symbol].append(generalized_symbol)
+                        weak_association_generalizations[memorized_symbol].append(generalized_symbol)
                         break
                     else:
                         # compute overlap coefficient
                         overlap_coeff = overlap_coefficient(generalized_symbol, response)
                         if overlap_coeff >= args.overlap_coefficient:
-                            weak_ssociation_generalizations[memorized_symbol].append(generalized_symbol)
+                            weak_association_generalizations[memorized_symbol].append(generalized_symbol)
                             break
 
         # Save the weak association generalizations
-        with open(weak_ssociation_generalizations_path, "w") as f:
-            json.dump(weak_ssociation_generalizations, f, indent=4)
+        with open(weak_association_generalizations_path, "w") as f:
+            json.dump(weak_association_generalizations, f, indent=4)
 
     print("weak association generalizations saved successfully!")
 
     # Print the statistics 
     weak_asso_gens = []
-    for symbol in weak_ssociation_generalizations.keys():
-        weak_asso_gens.extend(weak_ssociation_generalizations[symbol])
+    for symbol in weak_association_generalizations.keys():
+        weak_asso_gens.extend(weak_association_generalizations[symbol])
     print(f"Topic: {topic}")
     print(f"Number of unique weak association generalizations: {len(set(weak_asso_gens))}")
-    print(f"Number of unique memorized symbols: {len(weak_ssociation_generalizations.keys())}")
+    print(f"Number of unique memorized symbols: {len(weak_association_generalizations.keys())}")
 
     """
     TRACING GENERALIZATIONS TO DIFFUSE SYMBOLS

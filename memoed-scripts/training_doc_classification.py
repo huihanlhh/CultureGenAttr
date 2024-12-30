@@ -19,6 +19,8 @@ from transformers import AutoTokenizer
 # Load olmo-7b tokeniser
 tokenizer = AutoTokenizer.from_pretrained("allenai/OLMo-7B-hf")
 
+# Set the maximum sequence length
+# 2048 is for OLMO-7b, can be changed for your model
 MAX_SEQ_LEN = 2048
 
 # Elasticsearch connection setup
@@ -359,21 +361,21 @@ if __name__ == '__main__':
     # Setup logging
     logging.basicConfig(filename=f"output_{topic}.log", filemode='w', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    # Path to non_independent_symbols 
-    path_to_non_independent_symbols = f"{args.home_dir}/probable_data/categories_nationality_100_{args.model_name}_prob=True_non_independent_symbols.json"
+    # Path to non_diffuse_symbols 
+    path_to_non_diffuse_symbols = f"{args.home_dir}/probable_data/categories_nationality_100_{args.model_name}_prob=True_non_diffuse_symbols.json"
 
     # JSON path for storing results
-    path_to_doc_ranking = f"{args.home_dir}/memoed_scripts/training_document_classification_{args.model_name}_{topic}_left.json"
+    path_to_doc_ranking = f"{args.home_dir}/memoed_scripts/training_document_classification_{args.model_name}_{topic}.json"
 
     # Path to shortened responses
     path_to_shortened_responses = f"{args.home_dir}/probable_data/categories_nationality_100_{args.model_name}_prob=True_new_shortened.json"
 
-    # Get the list of non-independent symbols
-    with open(path_to_non_independent_symbols, "r") as r:
-        non_independent_symbols = json.load(r)
+    # Get the list of non-diffuse symbols
+    with open(path_to_non_diffuse_symbols, "r") as r:
+        non_diffuse_symbols = json.load(r)
 
-    # Get the list of non-independent symbols for the topic
-    non_independent_symbols_topic = non_independent_symbols[topic]
+    # Get the list of non-diffuse symbols for the topic
+    non_diffuse_symbols_topic = non_diffuse_symbols[topic]
 
     # Get the shortened responses
     with open(path_to_shortened_responses, "r") as read_file:
@@ -387,25 +389,25 @@ if __name__ == '__main__':
     except FileNotFoundError:
         ranking_score = {}
 
-    # Loop through the non-independent symbols
-    for cnt, non_independent_symbol in tqdm(enumerate(non_independent_symbols_topic), desc="Looping through non-independent symbols"):
-        print(f"Non-independent symbol: {non_independent_symbol}")
-        #logging.info(f"Non-independent symbol: {non_independent_symbol}")
+    # Loop through the non-diffuse symbols
+    for cnt, non_diffuse_symbol in tqdm(enumerate(non_diffuse_symbols_topic), desc="Looping through non-diffuse symbols"):
+        print(f"Non-diffuse symbol: {non_diffuse_symbol}")
+        #logging.info(f"Non-diffuse symbol: {non_diffuse_symbol}")
 
-        # If the non-independent symbol is already processed
-        if non_independent_symbol in ranking_score:
-            if len(ranking_score[non_independent_symbol]) == len(countries_nationalities_list):
-                print(f"Non-independent symbol {non_independent_symbol} already processed")
-                #logging.info(f"Non-independent symbol {non_independent_symbol} already processed")
+        # If the non-diffuse symbol is already processed
+        if non_diffuse_symbol in ranking_score:
+            if len(ranking_score[non_diffuse_symbol]) == len(countries_nationalities_list):
+                print(f"Non-diffuse symbol {non_diffuse_symbol} already processed")
+                #logging.info(f"Non-diffuse symbol {non_diffuse_symbol} already processed")
                 continue
             else:
-                print(f"Non-independent symbol {non_independent_symbol} partially processed")
-                #logging.info(f"Non-independent symbol {non_independent_symbol} partially processed")
+                print(f"Non-diffuse symbol {non_diffuse_symbol} partially processed")
+                #logging.info(f"Non-diffuse symbol {non_diffuse_symbol} partially processed")
         else:
-            ranking_score[non_independent_symbol] = {}
+            ranking_score[non_diffuse_symbol] = {}
 
-        # Get the list of nationalities for the non-independent symbol
-        lst_of_countries = find_countries_with_symbol(responses, non_independent_symbol)
+        # Get the list of nationalities for the non-diffuse symbol
+        lst_of_countries = find_countries_with_symbol(responses, non_diffuse_symbol)
         print(f"List of countries: {lst_of_countries}")
         logging.info(f"List of countries: {lst_of_countries}")
 
@@ -415,12 +417,12 @@ if __name__ == '__main__':
             print(f"Nationality: {nationality}")
             #logging.info(f"Nationality: {nationality}")
 
-            if nationality in ranking_score[non_independent_symbol]:
+            if nationality in ranking_score[non_diffuse_symbol]:
                 print(f"Nationality {nationality} already processed")
                 continue
 
             # Query terms
-            query_terms = [nationality, non_independent_symbol]
+            query_terms = [nationality, non_diffuse_symbol]
             query_culture = nationality
             print(f"Query terms: {query_terms}")
             logging.info(f"Query terms: {query_terms}")
